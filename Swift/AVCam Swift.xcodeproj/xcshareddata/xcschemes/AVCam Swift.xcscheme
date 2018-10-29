@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Scheme version="1.3" LastUpgradeVersion="1000">
+	<AnalyzeAction buildConfiguration="Debug" />
+	<ArchiveAction revealArchiveInOrganizer="YES" buildConfiguration="Release" />
+	<TestAction shouldUseLaunchSchemeArgsEnv="YES" selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" buildConfiguration="Debug" codeCoverageEnabled="NO" selectedLauncherIdentifier="Xcode.DebuggerFoundation.Launcher.LLDB">
+		<Testables />
+		<MacroExpansion>
+			<BuildableReference BlueprintIdentifier="7AA677101CFF765500B353FB" BuildableName="AVCam.app" BuildableIdentifier="primary" BlueprintName="AVCam" ReferencedContainer="container:AVCam Swift.xcodeproj" />
+		</MacroExpansion>
+	</TestAction>
+	<ProfileAction shouldUseLaunchSchemeArgsEnv="YES" useCustomWorkingDirectory="NO" buildConfiguration="Release" debugDocumentVersioning="YES" savedToolIdentifier="">
+		<BuildableProductRunnable runnableDebuggingMode="0">
+			<BuildableReference BlueprintIdentifier="7AA677101CFF765500B353FB" BuildableName="AVCam.app" BuildableIdentifier="primary" BlueprintName="AVCam" ReferencedContainer="container:AVCam Swift.xcodeproj" />
+		</BuildableProductRunnable>
+	</ProfileAction>
+	<BuildAction buildImplicitDependencies="YES" parallelizeBuildables="YES">
+		<BuildActionEntries>
+			<BuildActionEntry buildForAnalyzing="YES" buildForRunning="YES" buildForTesting="YES" buildForProfiling="YES" buildForArchiving="YES">
+				<BuildableReference BlueprintIdentifier="7AA677101CFF765500B353FB" BuildableName="AVCam.app" BuildableIdentifier="primary" BlueprintName="AVCam" ReferencedContainer="container:AVCam Swift.xcodeproj" />
+			</BuildActionEntry>
+		</BuildActionEntries>
+	</BuildAction>
+	<LaunchAction selectedDebuggerIdentifier="Xcode.DebuggerFoundation.Debugger.LLDB" debugServiceExtension="internal" debugDocumentVersioning="YES" ignoresPersistentStateOnLaunch="NO" buildConfiguration="Debug" useCustomWorkingDirectory="NO" selectedLauncherIdentifier="Xcode.DebuggerFoundation.Launcher.LLDB" allowLocationSimulation="YES" launchStyle="0">
+		<BuildableProductRunnable runnableDebuggingMode="0">
+			<BuildableReference BlueprintIdentifier="7AA677101CFF765500B353FB" BuildableName="AVCam.app" BuildableIdentifier="primary" BlueprintName="AVCam" ReferencedContainer="container:AVCam Swift.xcodeproj" />
+		</BuildableProductRunnable>
+	</LaunchAction>
+</Scheme>

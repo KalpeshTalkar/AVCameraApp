@@ -12,6 +12,8 @@
 		220626891A1E345E00A45150 /* AVCamPreviewView.m in Sources */ = {isa = PBXBuildFile; fileRef = 220626851A1E345E00A45150 /* AVCamPreviewView.m */; };
 		2206268A1A1E345E00A45150 /* AVCamCameraViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 220626871A1E345E00A45150 /* AVCamCameraViewController.m */; };
 		22CA31B81B022D1300D2DE70 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 22CA31B61B022D1300D2DE70 /* LaunchScreen.storyboard */; };
+		2C6C46E8226B045F007D07EB /* ItemSelectionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C6C46E7226B045F007D07EB /* ItemSelectionViewController.m */; };
+		7697F93B217A95040011862B /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 7697F93A217A95040011862B /* README.md */; };
 		7A74447A1CEE6B0F00C70C83 /* AVCamPhotoCaptureDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 7A7444791CEE6B0F00C70C83 /* AVCamPhotoCaptureDelegate.m */; };
 		7A74447C1CEE6B4B00C70C83 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7A74447B1CEE6B4B00C70C83 /* Assets.xcassets */; };
 		7A74447E1CEE6B5900C70C83 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7A74447D1CEE6B5900C70C83 /* Main.storyboard */; };
@@ -28,12 +30,15 @@
 		220626861A1E345E00A45150 /* AVCamCameraViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamCameraViewController.h; sourceTree = "<group>"; };
 		220626871A1E345E00A45150 /* AVCamCameraViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamCameraViewController.m; sourceTree = "<group>"; };
 		22CA31B71B022D1300D2DE70 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = AVCam/Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		257357002572FAD000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; name = SampleCode.xcconfig; path = ../Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
-		25765F802574C94000000001 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE.txt; sourceTree = "<group>"; };
+		2C6C46E6226B045F007D07EB /* ItemSelectionViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ItemSelectionViewController.h; sourceTree = "<group>"; };
+		2C6C46E7226B045F007D07EB /* ItemSelectionViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ItemSelectionViewController.m; sourceTree = "<group>"; };
+		7697F93A217A95040011862B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		7A7444781CEE6B0F00C70C83 /* AVCamPhotoCaptureDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AVCamPhotoCaptureDelegate.h; sourceTree = "<group>"; };
 		7A7444791CEE6B0F00C70C83 /* AVCamPhotoCaptureDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AVCamPhotoCaptureDelegate.m; sourceTree = "<group>"; };
 		7A74447B1CEE6B4B00C70C83 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7A74447D1CEE6B5900C70C83 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = Main.storyboard; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		F8462150F845AFC000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; name = SampleCode.xcconfig; path = ../Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
+		F85DF100F85E1E5000000001 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,10 +55,11 @@
 		220626501A1E330400A45150 = {
 			isa = PBXGroup;
 			children = (
+				7697F93A217A95040011862B /* README.md */,
 				2206265B1A1E330400A45150 /* AVCam */,
 				2206265A1A1E330400A45150 /* Products */,
-				25731F502573580000000001 /* Configuration */,
-				25766210257644E000000001 /* LICENSE */,
+				F8462190F8470BB000000001 /* Configuration */,
+				F85DED30F85DEBF000000001 /* LICENSE */,
 			);
 			sourceTree = "<group>";
 		};
@@ -74,6 +80,8 @@
 				220626851A1E345E00A45150 /* AVCamPreviewView.m */,
 				220626861A1E345E00A45150 /* AVCamCameraViewController.h */,
 				220626871A1E345E00A45150 /* AVCamCameraViewController.m */,
+				2C6C46E6226B045F007D07EB /* ItemSelectionViewController.h */,
+				2C6C46E7226B045F007D07EB /* ItemSelectionViewController.m */,
 				7A7444781CEE6B0F00C70C83 /* AVCamPhotoCaptureDelegate.h */,
 				7A7444791CEE6B0F00C70C83 /* AVCamPhotoCaptureDelegate.m */,
 				7A74447D1CEE6B5900C70C83 /* Main.storyboard */,
@@ -85,18 +93,18 @@
 			path = AVCam;
 			sourceTree = "<group>";
 		};
-		25731F502573580000000001 /* Configuration */ = {
+		F8462190F8470BB000000001 /* Configuration */ = {
 			isa = PBXGroup;
 			children = (
-				257357002572FAD000000001 /* SampleCode.xcconfig */,
+				F8462150F845AFC000000001 /* SampleCode.xcconfig */,
 			);
 			name = Configuration;
 			sourceTree = "<group>";
 		};
-		25766210257644E000000001 /* LICENSE */ = {
+		F85DED30F85DEBF000000001 /* LICENSE */ = {
 			isa = PBXGroup;
 			children = (
-				25765F802574C94000000001 /* LICENSE.txt */,
+				F85DF100F85E1E5000000001 /* LICENSE.txt */,
 			);
 			name = LICENSE;
 			path = ../LICENSE;
@@ -112,6 +120,7 @@
 				220626551A1E330400A45150 /* Sources */,
 				220626561A1E330400A45150 /* Frameworks */,
 				220626571A1E330400A45150 /* Resources */,
+				B9610230B960ECB000000001,
 			);
 			buildRules = (
 			);
@@ -139,7 +148,7 @@
 			};
 			buildConfigurationList = 220626541A1E330400A45150 /* Build configuration list for PBXProject "AVCam Objective-C" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
@@ -162,6 +171,7 @@
 			files = (
 				7A74447E1CEE6B5900C70C83 /* Main.storyboard in Resources */,
 				7A74447C1CEE6B4B00C70C83 /* Assets.xcassets in Resources */,
+				7697F93B217A95040011862B /* README.md in Resources */,
 				22CA31B81B022D1300D2DE70 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -175,6 +185,7 @@
 			files = (
 				220626881A1E345E00A45150 /* AVCamAppDelegate.m in Sources */,
 				2206265F1A1E330400A45150 /* main.m in Sources */,
+				2C6C46E8226B045F007D07EB /* ItemSelectionViewController.m in Sources */,
 				220626891A1E345E00A45150 /* AVCamPreviewView.m in Sources */,
 				2206268A1A1E345E00A45150 /* AVCamCameraViewController.m in Sources */,
 				7A74447A1CEE6B0F00C70C83 /* AVCamPhotoCaptureDelegate.m in Sources */,
@@ -198,7 +209,7 @@
 /* Begin XCBuildConfiguration section */
 		2206267A1A1E330400A45150 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 257357002572FAD000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = F8462150F845AFC000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -244,7 +255,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -254,7 +265,7 @@
 		};
 		2206267B1A1E330400A45150 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 257357002572FAD000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = F8462150F845AFC000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -293,7 +304,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -303,13 +314,14 @@
 		};
 		2206267D1A1E330400A45150 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 257357002572FAD000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = F8462150F845AFC000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = AVCam/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.AVCam${SAMPLE_CODE_DISAMBIGUATOR}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -320,13 +332,14 @@
 		};
 		2206267E1A1E330400A45150 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 257357002572FAD000000001 /* SampleCode.xcconfig */;
+			baseConfigurationReference = F8462150F845AFC000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = AVCam/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.AVCam${SAMPLE_CODE_DISAMBIGUATOR}";
 				PRODUCT_NAME = "$(TARGET_NAME)";

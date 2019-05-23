@@ -2,7 +2,7 @@
 See LICENSE folder for this sample’s licensing information.
 
 Abstract:
-Provides the header for the application delegate.
+The app's delegate object.
 */
 
 @import UIKit;

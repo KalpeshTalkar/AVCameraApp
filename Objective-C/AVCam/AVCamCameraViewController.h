@@ -2,7 +2,7 @@
 See LICENSE folder for this sample’s licensing information.
 
 Abstract:
-Provides the header for the view controller for the camera interface.
+The app's primary view controller that presents the camera interface.
 */
 
 @import UIKit;

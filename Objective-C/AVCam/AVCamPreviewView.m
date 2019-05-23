@@ -2,8 +2,9 @@
 See LICENSE folder for this sample’s licensing information.
 
 Abstract:
-Implements the camera preview view that shows capture output.
+The camera preview view that displays the capture output.
 */
+
 @import AVFoundation;
 
 #import "AVCamPreviewView.h"

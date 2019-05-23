@@ -2,14 +2,16 @@
 See LICENSE folder for this sample’s licensing information.
 
 Abstract:
-Implements the view controller for the camera interface.
+The app's primary view controller that presents the camera interface.
 */
+
 @import AVFoundation;
 @import Photos;
 
 #import "AVCamCameraViewController.h"
 #import "AVCamPreviewView.h"
 #import "AVCamPhotoCaptureDelegate.h"
+#import "ItemSelectionViewController.h"
 
 static void*  SessionRunningContext = &SessionRunningContext;
 static void*  SystemPressureContext = &SystemPressureContext;
@@ -40,6 +42,7 @@ typedef NS_ENUM(NSInteger, AVCamPortraitEffectsMatteDeliveryMode) {
     AVCamPortraitEffectsMatteDeliveryModeOff
 };
 
+
 @interface AVCaptureDeviceDiscoverySession (Utilities)
 
 - (NSInteger)uniqueDevicePositionsCount;
@@ -63,7 +66,7 @@ typedef NS_ENUM(NSInteger, AVCamPortraitEffectsMatteDeliveryMode) {
 
 @end
 
-@interface AVCamCameraViewController () <AVCaptureFileOutputRecordingDelegate>
+@interface AVCamCameraViewController () <AVCaptureFileOutputRecordingDelegate, ItemSelectionViewControllerDelegate>
 
 // Session management.
 @property (nonatomic, weak) IBOutlet AVCamPreviewView* previewView;
@@ -89,6 +92,9 @@ typedef NS_ENUM(NSInteger, AVCamPortraitEffectsMatteDeliveryMode) {
 @property (nonatomic) AVCamDepthDataDeliveryMode depthDataDeliveryMode;
 @property (nonatomic, weak) IBOutlet UIButton* portraitEffectsMatteDeliveryButton;
 @property (nonatomic) AVCamPortraitEffectsMatteDeliveryMode portraitEffectsMatteDeliveryMode;
+@property (nonatomic, weak) IBOutlet UISegmentedControl *photoQualityPrioritizationSegControl;
+@property (nonatomic) AVCapturePhotoQualityPrioritization photoQualityPrioritizationMode;
+@property (weak, nonatomic) IBOutlet UIButton *semanticSegmentationMatteDeliveryButton;
 
 @property (nonatomic) AVCapturePhotoOutput* photoOutput;
 @property (nonatomic) NSMutableDictionary<NSNumber* , AVCamPhotoCaptureDelegate* >* inProgressPhotoCaptureDelegates;
@@ -101,6 +107,7 @@ typedef NS_ENUM(NSInteger, AVCamPortraitEffectsMatteDeliveryMode) {
 @property (nonatomic, strong) AVCaptureMovieFileOutput* movieFileOutput;
 @property (nonatomic) UIBackgroundTaskIdentifier backgroundRecordingID;
 
+@property (nonatomic, retain) UIActivityIndicatorView *spinner;
 @end
 
 @implementation AVCamCameraViewController
@@ -119,6 +126,8 @@ typedef NS_ENUM(NSInteger, AVCamPortraitEffectsMatteDeliveryMode) {
     self.captureModeControl.enabled = NO;
     self.depthDataDeliveryButton.enabled = NO;
     self.portraitEffectsMatteDeliveryButton.enabled = NO;
+	self.semanticSegmentationMatteDeliveryButton.enabled = NO;
+    self.photoQualityPrioritizationSegControl.enabled = NO;
     
     // Create the AVCaptureSession.
     self.session = [[AVCaptureSession alloc] init];
@@ -187,6 +196,11 @@ typedef NS_ENUM(NSInteger, AVCamPortraitEffectsMatteDeliveryMode) {
     dispatch_async(self.sessionQueue, ^{
         [self configureSession];
     });
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleLarge];
+        self.spinner.color = [UIColor yellowColor];
+        [self.previewView addSubview:self.spinner];
+    });
 }
 
 - (void) viewWillAppear:(BOOL)animated
@@ -251,6 +265,10 @@ typedef NS_ENUM(NSInteger, AVCamPortraitEffectsMatteDeliveryMode) {
 {
     // Disable autorotation of the interface when recording is in progress.
     return !self.movieFileOutput.isRecording;
+}
+
+- (UIInterfaceOrientation)windowOrientation {
+    return self.view.window.windowScene.interfaceOrientation;
 }
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
@@ -323,10 +341,9 @@ typedef NS_ENUM(NSInteger, AVCamPortraitEffectsMatteDeliveryMode) {
              Use the status bar orientation as the initial video orientation. Subsequent orientation changes are
              handled by CameraViewController.viewWillTransition(to:with:).
             */
-            UIInterfaceOrientation statusBarOrientation = [UIApplication sharedApplication].statusBarOrientation;
             AVCaptureVideoOrientation initialVideoOrientation = AVCaptureVideoOrientationPortrait;
-            if (statusBarOrientation != UIInterfaceOrientationUnknown) {
-                initialVideoOrientation = (AVCaptureVideoOrientation)statusBarOrientation;
+            if (self.windowOrientation != UIInterfaceOrientationUnknown) {
+                initialVideoOrientation = (AVCaptureVideoOrientation)self.windowOrientation;
             }
             
             self.previewView.videoPreviewLayer.connection.videoOrientation = initialVideoOrientation;
@@ -362,10 +379,13 @@ typedef NS_ENUM(NSInteger, AVCamPortraitEffectsMatteDeliveryMode) {
         self.photoOutput.livePhotoCaptureEnabled = self.photoOutput.livePhotoCaptureSupported;
         self.photoOutput.depthDataDeliveryEnabled = self.photoOutput.depthDataDeliverySupported;
         self.photoOutput.portraitEffectsMatteDeliveryEnabled = self.photoOutput.portraitEffectsMatteDeliverySupported;
+		self.photoOutput.enabledSemanticSegmentationMatteTypes = self.photoOutput.availableSemanticSegmentationMatteTypes;
+        self.photoOutput.maxPhotoQualityPrioritization = AVCapturePhotoQualityPrioritizationQuality;
         
         self.livePhotoMode = self.photoOutput.livePhotoCaptureSupported ? AVCamLivePhotoModeOn : AVCamLivePhotoModeOff;
         self.depthDataDeliveryMode = self.photoOutput.depthDataDeliverySupported ? AVCamDepthDataDeliveryModeOn : AVCamDepthDataDeliveryModeOff;
         self.portraitEffectsMatteDeliveryMode = self.photoOutput.portraitEffectsMatteDeliverySupported ? AVCamPortraitEffectsMatteDeliveryModeOn : AVCamPortraitEffectsMatteDeliveryModeOff;
+        self.photoQualityPrioritizationMode = AVCapturePhotoQualityPrioritizationBalanced;
         
         self.inProgressPhotoCaptureDelegates = [NSMutableDictionary dictionary];
         self.inProgressLivePhotoCapturesCount = 0;
@@ -432,7 +452,6 @@ typedef NS_ENUM(NSInteger, AVCamPortraitEffectsMatteDeliveryMode) {
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.livePhotoModeButton.enabled = YES;
-                    self.livePhotoModeButton.hidden = NO;
                 });
             }
             
@@ -440,7 +459,6 @@ typedef NS_ENUM(NSInteger, AVCamPortraitEffectsMatteDeliveryMode) {
                 self.photoOutput.depthDataDeliveryEnabled = YES;
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    self.depthDataDeliveryButton.hidden = NO;
                     self.depthDataDeliveryButton.enabled = YES;
                 });
             }
@@ -449,10 +467,26 @@ typedef NS_ENUM(NSInteger, AVCamPortraitEffectsMatteDeliveryMode) {
                 self.photoOutput.portraitEffectsMatteDeliveryEnabled = YES;
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    self.portraitEffectsMatteDeliveryButton.hidden = NO;
                     self.portraitEffectsMatteDeliveryButton.enabled = YES;
                 });
             }
+			
+			if (self.photoOutput.availableSemanticSegmentationMatteTypes.count > 0) {
+				self.photoOutput.enabledSemanticSegmentationMatteTypes = self.photoOutput.availableSemanticSegmentationMatteTypes;
+				
+				dispatch_async(dispatch_get_main_queue(), ^{
+					self.semanticSegmentationMatteDeliveryButton.enabled = (self.depthDataDeliveryMode == AVCamDepthDataDeliveryModeOn) ? YES : NO;
+				});
+			}
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                self.livePhotoModeButton.hidden = NO;
+                self.depthDataDeliveryButton.hidden = NO;
+                self.portraitEffectsMatteDeliveryButton.hidden = NO;
+                self.semanticSegmentationMatteDeliveryButton.hidden = NO;
+                self.photoQualityPrioritizationSegControl.hidden = NO;
+                self.photoQualityPrioritizationSegControl.enabled = YES;
+            });
             
             [self.session commitConfiguration];
         });
@@ -461,6 +495,8 @@ typedef NS_ENUM(NSInteger, AVCamPortraitEffectsMatteDeliveryMode) {
         self.livePhotoModeButton.hidden = YES;
         self.depthDataDeliveryButton.hidden = YES;
         self.portraitEffectsMatteDeliveryButton.hidden = YES;
+		self.semanticSegmentationMatteDeliveryButton.hidden = YES;
+        self.photoQualityPrioritizationSegControl.hidden = YES;
         
         dispatch_async(self.sessionQueue, ^{
             AVCaptureMovieFileOutput* movieFileOutput = [[AVCaptureMovieFileOutput alloc] init];
@@ -480,6 +516,13 @@ typedef NS_ENUM(NSInteger, AVCamPortraitEffectsMatteDeliveryMode) {
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
                     self.recordButton.enabled = YES;
+                    
+                    /*
+                     For photo captures during movie recording, Speed quality photo processing is prioritized
+                     to avoid frame drops during recording.
+                     */
+                    self.photoQualityPrioritizationSegControl.selectedSegmentIndex = 0;
+                    [self.photoQualityPrioritizationSegControl sendActionsForControlEvents:UIControlEventValueChanged];
                 });
             }
         });
@@ -495,6 +538,10 @@ typedef NS_ENUM(NSInteger, AVCamPortraitEffectsMatteDeliveryMode) {
     self.photoButton.enabled = NO;
     self.livePhotoModeButton.enabled = NO;
     self.captureModeControl.enabled = NO;
+    self.depthDataDeliveryButton.enabled = NO;
+    self.portraitEffectsMatteDeliveryButton.enabled = NO;
+    self.semanticSegmentationMatteDeliveryButton.enabled = NO;
+    self.photoQualityPrioritizationSegControl.enabled = NO;
     
     dispatch_async(self.sessionQueue, ^{
         AVCaptureDevice* currentVideoDevice = self.videoDeviceInput.device;
@@ -571,6 +618,8 @@ typedef NS_ENUM(NSInteger, AVCamPortraitEffectsMatteDeliveryMode) {
             self.photoOutput.livePhotoCaptureEnabled = self.photoOutput.livePhotoCaptureSupported;
             self.photoOutput.depthDataDeliveryEnabled = self.photoOutput.depthDataDeliverySupported;
             self.photoOutput.portraitEffectsMatteDeliveryEnabled = self.photoOutput.portraitEffectsMatteDeliverySupported;
+			self.photoOutput.enabledSemanticSegmentationMatteTypes = self.photoOutput.availableSemanticSegmentationMatteTypes;
+            self.photoOutput.maxPhotoQualityPrioritization = AVCapturePhotoQualityPrioritizationQuality;
             
             [self.session commitConfiguration];
         }
@@ -582,9 +631,9 @@ typedef NS_ENUM(NSInteger, AVCamPortraitEffectsMatteDeliveryMode) {
             self.livePhotoModeButton.enabled = YES;
             self.captureModeControl.enabled = YES;
             self.depthDataDeliveryButton.enabled = self.photoOutput.isDepthDataDeliveryEnabled;
-            self.depthDataDeliveryButton.hidden = !self.photoOutput.depthDataDeliverySupported;
             self.portraitEffectsMatteDeliveryButton.enabled = self.photoOutput.isPortraitEffectsMatteDeliveryEnabled;
-            self.portraitEffectsMatteDeliveryButton.hidden = !self.photoOutput.portraitEffectsMatteDeliverySupported;
+            self.semanticSegmentationMatteDeliveryButton.enabled = (self.photoOutput.availableSemanticSegmentationMatteTypes.count > 0 && self.depthDataDeliveryMode == AVCamDepthDataDeliveryModeOn) ? YES : NO;
+            self.photoQualityPrioritizationSegControl.enabled = YES;
         });
     });
 }
@@ -669,6 +718,12 @@ monitorSubjectAreaChange:(BOOL)monitorSubjectAreaChange
         photoSettings.depthDataDeliveryEnabled = (self.depthDataDeliveryMode == AVCamDepthDataDeliveryModeOn && self.photoOutput.isDepthDataDeliveryEnabled);
         
         photoSettings.portraitEffectsMatteDeliveryEnabled = (self.portraitEffectsMatteDeliveryMode == AVCamPortraitEffectsMatteDeliveryModeOn && self.photoOutput.isPortraitEffectsMatteDeliveryEnabled);
+		
+		if ( photoSettings.depthDataDeliveryEnabled && self.photoOutput.availableSemanticSegmentationMatteTypes.count > 0 ) {
+			photoSettings.enabledSemanticSegmentationMatteTypes = self.photoOutput.enabledSemanticSegmentationMatteTypes;
+		}
+		
+        photoSettings.photoQualityPrioritization = self.photoQualityPrioritizationMode;
         
         // Use a separate object for the photo capture delegate to isolate each capture life cycle.
         AVCamPhotoCaptureDelegate* photoCaptureDelegate = [[AVCamPhotoCaptureDelegate alloc] initWithRequestedPhotoSettings:photoSettings willCapturePhotoAnimation:^{
@@ -710,6 +765,18 @@ monitorSubjectAreaChange:(BOOL)monitorSubjectAreaChange
             dispatch_async(self.sessionQueue, ^{
                 self.inProgressPhotoCaptureDelegates[@(photoCaptureDelegate.requestedPhotoSettings.uniqueID)] = nil;
             });
+        } photoProcessingHandler:^(BOOL animate) {
+            // Animates a spinner while photo is processing
+            dispatch_async(dispatch_get_main_queue(), ^{
+                if ( animate ) {
+                    self.spinner.hidesWhenStopped = YES;
+                    self.spinner.center = CGPointMake(self.previewView.frame.size.width / 2.0, self.previewView.frame.size.height / 2.0);
+                    [self.spinner startAnimating];
+                }
+                else {
+                    [self.spinner stopAnimating];
+                }
+            });
         }];
         
         /*
@@ -745,17 +812,23 @@ monitorSubjectAreaChange:(BOOL)monitorSubjectAreaChange
     dispatch_async(self.sessionQueue, ^{
         self.depthDataDeliveryMode = (self.depthDataDeliveryMode == AVCamDepthDataDeliveryModeOn) ? AVCamDepthDataDeliveryModeOff : AVCamDepthDataDeliveryModeOn;
         AVCamDepthDataDeliveryMode depthDataDeliveryMode = self.depthDataDeliveryMode;
-        if (depthDataDeliveryMode == AVCamDepthDataDeliveryModeOff) {
+        if (depthDataDeliveryMode == AVCamDepthDataDeliveryModeOn) {
+            self.portraitEffectsMatteDeliveryMode = AVCamPortraitEffectsMatteDeliveryModeOn;
+        }
+        else {
             self.portraitEffectsMatteDeliveryMode = AVCamPortraitEffectsMatteDeliveryModeOff;
         }
         
         dispatch_async(dispatch_get_main_queue(), ^{
             if (depthDataDeliveryMode == AVCamDepthDataDeliveryModeOn) {
                 [self.depthDataDeliveryButton setImage:[UIImage imageNamed:@"DepthON"] forState:UIControlStateNormal];
+                [self.portraitEffectsMatteDeliveryButton setImage:[UIImage imageNamed:@"PortraitMatteON"] forState:UIControlStateNormal];
+                self.semanticSegmentationMatteDeliveryButton.enabled = YES;
             }
             else {
                 [self.depthDataDeliveryButton setImage:[UIImage imageNamed:@"DepthOFF"] forState:UIControlStateNormal];
                 [self.portraitEffectsMatteDeliveryButton setImage:[UIImage imageNamed:@"PortraitMatteOFF"] forState:UIControlStateNormal];
+				self.semanticSegmentationMatteDeliveryButton.enabled = NO;
             }
         });
     });
@@ -781,6 +854,51 @@ monitorSubjectAreaChange:(BOOL)monitorSubjectAreaChange
             }
         });
     });
+}
+
+- (IBAction) togglePhotoQualityPrioritizationMode:(UISegmentedControl*)photoQualityPrioritizationSegControl
+{
+    NSInteger selectedQuality = photoQualityPrioritizationSegControl.selectedSegmentIndex;
+    dispatch_async(self.sessionQueue, ^{
+        switch (selectedQuality) {
+            case 0:
+                self.photoQualityPrioritizationMode = AVCapturePhotoQualityPrioritizationSpeed;
+                break;
+            case 1:
+                self.photoQualityPrioritizationMode = AVCapturePhotoQualityPrioritizationBalanced;
+                break;
+            case 2:
+                self.photoQualityPrioritizationMode = AVCapturePhotoQualityPrioritizationQuality;
+                break;
+            default:
+                break;
+        }
+
+    });
+}
+- (IBAction)toggleSemanticSegmentationMatteDeliveryMode:(UIButton*)semanticSegmentationMatteDeliveryButton
+{
+	ItemSelectionViewController *itemSelectionViewController = [[ItemSelectionViewController alloc]initWithDelegate:self identifier:nil allItems:self.photoOutput.availableSemanticSegmentationMatteTypes selectedItems:self.photoOutput.enabledSemanticSegmentationMatteTypes allowMultipleSelection:YES];
+	
+	[self presentItemSelectionViewController:itemSelectionViewController];
+}
+
+- (void) presentItemSelectionViewController:(ItemSelectionViewController *) it
+{
+	UINavigationController *navigationController = [[UINavigationController alloc]initWithRootViewController:it];
+	navigationController.navigationBar.barTintColor = UIColor.blackColor;
+	navigationController.navigationBar.tintColor = self.view.tintColor;
+	
+	[self presentViewController:navigationController animated:YES completion:nil];
+}
+
+#pragma mark ItemSelectionViewControllerDelegate
+
+- (void)itemSelectionViewController:(ItemSelectionViewController *)it didFinishSelectingItems:(NSArray *)selectedItems
+{
+	dispatch_async(self.sessionQueue, ^{
+		self.photoOutput.enabledSemanticSegmentationMatteTypes = selectedItems;
+	});
 }
 
 #pragma mark Recording Movies
@@ -954,13 +1072,11 @@ didFinishRecordingToOutputFileAtURL:(NSURL*)outputFileURL
 {
     if (context == SessionRunningContext) {
         BOOL isSessionRunning = [change[NSKeyValueChangeNewKey] boolValue];
-        BOOL livePhotoCaptureSupported = self.photoOutput.livePhotoCaptureSupported;
         BOOL livePhotoCaptureEnabled = self.photoOutput.livePhotoCaptureEnabled;
-        BOOL depthDataDeliverySupported = self.photoOutput.depthDataDeliverySupported;
         BOOL depthDataDeliveryEnabled = self.photoOutput.depthDataDeliveryEnabled;
-        BOOL portraitEffectsMatteDeliverySupported = self.photoOutput.portraitEffectsMatteDeliverySupported;
         BOOL portraitEffectsMatteDeliveryEnabled = self.photoOutput.portraitEffectsMatteDeliveryEnabled;
-        
+        BOOL semanticSegmentationMatteDeliveryEnabled = (self.photoOutput.enabledSemanticSegmentationMatteTypes.count > 0) ? YES: NO;
+		
         dispatch_async(dispatch_get_main_queue(), ^{
             // Only enable the ability to change camera if the device has more than one camera.
             self.cameraButton.enabled = isSessionRunning && (self.videoDeviceDiscoverySession.uniqueDevicePositionsCount > 1);
@@ -968,11 +1084,10 @@ didFinishRecordingToOutputFileAtURL:(NSURL*)outputFileURL
             self.photoButton.enabled = isSessionRunning;
             self.captureModeControl.enabled = isSessionRunning;
             self.livePhotoModeButton.enabled = isSessionRunning && livePhotoCaptureEnabled;
-            self.livePhotoModeButton.hidden = !(isSessionRunning && livePhotoCaptureSupported);
-            self.depthDataDeliveryButton.enabled = isSessionRunning && depthDataDeliveryEnabled ;
-            self.depthDataDeliveryButton.hidden = !(isSessionRunning && depthDataDeliverySupported);
+            self.depthDataDeliveryButton.enabled = isSessionRunning && depthDataDeliveryEnabled;
             self.portraitEffectsMatteDeliveryButton.enabled = isSessionRunning && portraitEffectsMatteDeliveryEnabled;
-            self.portraitEffectsMatteDeliveryButton.hidden = !(isSessionRunning && portraitEffectsMatteDeliverySupported);
+            self.semanticSegmentationMatteDeliveryButton.enabled = isSessionRunning && semanticSegmentationMatteDeliveryEnabled;
+            self.photoQualityPrioritizationSegControl.enabled = isSessionRunning;
         });
     }
     else if (context == SystemPressureContext) {

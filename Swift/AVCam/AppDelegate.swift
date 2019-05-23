@@ -2,7 +2,7 @@
 See LICENSE folder for this sample’s licensing information.
 
 Abstract:
-Implements the application delegate.
+The app's delegate object.
 */
 
 import UIKit

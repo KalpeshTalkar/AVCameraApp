@@ -114,15 +114,18 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
             return
         }
         
+        guard let perceptualColorSpace = CGColorSpace(name: CGColorSpace.sRGB) else { return }
+        
         // Create a new CIImage from the matte's underlying CVPixelBuffer.
-        let ciImage = CIImage(cvImageBuffer: segmentationMatte.mattingImage, options: [imageOption: true])
+        let ciImage = CIImage( cvImageBuffer: segmentationMatte.mattingImage,
+                               options: [imageOption: true,
+                                         .colorSpace: perceptualColorSpace])
         
         // Get the HEIF representation of this image.
-        guard let linearColorSpace = CGColorSpace(name: CGColorSpace.linearSRGB),
-            let imageData = context.heifRepresentation(of: ciImage,
-                                                       format: .RGBA8,
-                                                       colorSpace: linearColorSpace,
-                                                       options: [.depthImage: ciImage]) else { return }
+        guard let imageData = context.heifRepresentation(of: ciImage,
+                                                         format: .RGBA8,
+                                                         colorSpace: perceptualColorSpace,
+                                                         options: [.depthImage: ciImage]) else { return }
         
         // Add the image data to the SSM data array for writing to the photo library.
         semanticSegmentationMatteDataArray.append(imageData)
@@ -144,11 +147,15 @@ extension PhotoCaptureProcessor: AVCapturePhotoCaptureDelegate {
             }
             let portraitEffectsMattePixelBuffer = portraitEffectsMatte.mattingImage
             let portraitEffectsMatteImage = CIImage( cvImageBuffer: portraitEffectsMattePixelBuffer, options: [ .auxiliaryPortraitEffectsMatte: true ] )
-            guard let linearColorSpace = CGColorSpace(name: CGColorSpace.linearSRGB) else {
+            
+            guard let perceptualColorSpace = CGColorSpace(name: CGColorSpace.sRGB) else {
                 portraitEffectsMatteData = nil
                 return
             }
-            portraitEffectsMatteData = context.heifRepresentation(of: portraitEffectsMatteImage, format: .RGBA8, colorSpace: linearColorSpace, options: [ CIImageRepresentationOption.portraitEffectsMatteImage: portraitEffectsMatteImage ] )
+            portraitEffectsMatteData = context.heifRepresentation(of: portraitEffectsMatteImage,
+                                                                  format: .RGBA8,
+                                                                  colorSpace: perceptualColorSpace,
+                                                                  options: [.portraitEffectsMatteImage: portraitEffectsMatteImage])
         } else {
             portraitEffectsMatteData = nil
         }
